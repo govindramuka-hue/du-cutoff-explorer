@@ -10,65 +10,72 @@ const CATEGORY_COLORS = {
 };
 
 let rawData = [];
+let selectedProgram = "";
 let chart;
 
-fetch("data.json")
-  .then(res => res.json())
-  .then(data => {
-    rawData = data;
-    populatePrograms();
-  });
-
-const programSelect = document.getElementById("programSelect");
-const categorySelect = document.getElementById("categorySelect");
 const programSearch = document.getElementById("programSearch");
+const programDropdown = document.getElementById("programDropdown");
+const categorySelect = document.getElementById("categorySelect");
 const collegeSearch = document.getElementById("collegeSearch");
 const collegeList = document.getElementById("collegeList");
 const collegeCount = document.getElementById("collegeCount");
 const collegeWarning = document.getElementById("collegeWarning");
 
-function populatePrograms() {
-  const programs = [...new Set(rawData.map(d => d["PROGRAM NAME"]))];
-  programSelect.innerHTML = `<option value="">Select program</option>`;
-  programs.forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p;
-    opt.textContent = p;
-    programSelect.appendChild(opt);
-  });
-}
+fetch("data.json")
+  .then(res => res.json())
+  .then(data => rawData = data);
+
+/* ---------- PROGRAM SEARCH (IOS SAFE AUTOCOMPLETE) ---------- */
 
 programSearch.addEventListener("input", () => {
   const q = programSearch.value.toLowerCase();
-  [...programSelect.options].forEach(o => {
-    if (!o.value) return;
-    o.hidden = !o.value.toLowerCase().includes(q);
+  programDropdown.innerHTML = "";
+
+  if (!q) {
+    programDropdown.classList.add("hidden");
+    return;
+  }
+
+  const programs = [...new Set(rawData.map(d => d["PROGRAM NAME"]))];
+  const matches = programs.filter(p => p.toLowerCase().includes(q));
+
+  matches.forEach(p => {
+    const item = document.createElement("div");
+    item.className = "dropdown-item";
+    item.textContent = p;
+    item.onclick = () => {
+      selectedProgram = p;
+      programSearch.value = p;
+      programDropdown.classList.add("hidden");
+      renderColleges();
+      updateChart();
+    };
+    programDropdown.appendChild(item);
   });
+
+  programDropdown.classList.toggle("hidden", matches.length === 0);
 });
 
-programSelect.addEventListener("change", () => {
-  renderColleges();
-  updateChart();
-});
-
-categorySelect.addEventListener("change", updateChart);
+/* ---------- COLLEGES ---------- */
 
 function renderColleges() {
   collegeList.innerHTML = "";
   collegeCount.textContent = `0 / ${MAX_COLLEGES} selected`;
   collegeWarning.classList.add("hidden");
 
-  const program = programSelect.value;
-  if (!program) return;
+  if (!selectedProgram) return;
 
   const colleges = rawData
-    .filter(d => d["PROGRAM NAME"] === program)
+    .filter(d => d["PROGRAM NAME"] === selectedProgram)
     .map(d => d["COLLEGE NAME"]);
 
   colleges.forEach(college => {
     const div = document.createElement("div");
     div.className = "college-item";
-    div.innerHTML = `<input type="checkbox" value="${college}"><span>${college}</span>`;
+    div.innerHTML = `
+      <input type="checkbox" value="${college}">
+      <span>${college}</span>
+    `;
     div.querySelector("input").addEventListener("change", handleCollegeSelect);
     collegeList.appendChild(div);
   });
@@ -94,19 +101,25 @@ function handleCollegeSelect() {
   updateChart();
 }
 
+categorySelect.addEventListener("change", updateChart);
+
+/* ---------- CHART (MOBILE + IOS FIXED) ---------- */
+
 function updateChart() {
-  const program = programSelect.value;
-  if (!program) return;
+  if (!selectedProgram) return;
 
   const category = categorySelect.value;
   const selectedColleges = [...collegeList.querySelectorAll("input:checked")].map(i => i.value);
 
-  let filtered = rawData.filter(d => d["PROGRAM NAME"] === program);
+  let filtered = rawData.filter(d => d["PROGRAM NAME"] === selectedProgram);
 
-  if (selectedColleges.length > 0) {
+  if (selectedColleges.length) {
     filtered = filtered.filter(d => selectedColleges.includes(d["COLLEGE NAME"]));
   } else {
-    filtered = filtered.sort((a, b) => b[category] - a[category]).slice(0, 5);
+    filtered = filtered
+      .filter(d => d[category] !== null)
+      .sort((a, b) => b[category] - a[category])
+      .slice(0, 5);
   }
 
   if (chart) chart.destroy();
@@ -119,20 +132,35 @@ function updateChart() {
         label: `${category} Cutoff`,
         data: filtered.map(d => d[category]),
         backgroundColor: CATEGORY_COLORS[category],
-        borderRadius: 8
+        borderRadius: 6,
+        barThickness: 32
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      layout: { padding: 10 },
+      scales: {
+        x: {
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
+            callback: (value) => {
+              const label = filtered[value]["COLLEGE NAME"];
+              return label.length > 14 ? label.slice(0, 14) + "…" : label;
+            }
+          }
+        },
+        y: {
+          beginAtZero: true
+        }
+      },
       plugins: {
         tooltip: {
           callbacks: {
             label: ctx => `Cutoff: ${ctx.raw}`
           }
         }
-      },
-      scales: {
-        y: { beginAtZero: true }
       }
     }
   });
