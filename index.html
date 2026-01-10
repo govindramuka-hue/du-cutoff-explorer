@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DU Cutoffs 2025</title>
+  <title>DU Cutoff Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,8 +14,8 @@
 <div class="container">
 
   <header>
-    <h1>DU Cutoffs 2025</h1>
-    <p>Explore Delhi University cutoffs for 2025</p>
+    <h1>DU Cutoff Explorer</h1>
+    <p>Explore Delhi University cutoffs interactively to plan smarter.</p>
   </header>
 
   <div class="card">
@@ -57,19 +57,11 @@
     </div>
   </div>
 
-  <div class="card disclaimer">
-    <div>
-  <p><strong>Note for Students:</strong> This tool is made to help students get a rough idea of DU cutoffs. Please keep in mind:</p>
-  <ul>
-    <li>The cutoffs shown <strong>may have errors</strong> due to data mapping.</li>
-    <li>I only had data for the <strong>1st and mid-entry rounds</strong>, so I’ve taken the minimum of both as the cutoff. Where available, <strong>mid-entry marks</strong> were used because they might better represent later rounds.</li>
-    <li>In a few rare cases, <strong>mid-entry cutoffs are higher than the 1st round</strong>, possibly because students with higher scores applied in mid-entry rounds. These are exceptions, not the norm.</li>
-    <li>The tool <strong>does not specify total marks</strong>, which can be <strong>750 or 1000</strong>, so please check the marking scheme before drawing conclusions.</li>
-    <li>If you’re using a mobile device, please <strong>open in desktop site mode</strong> for the best experience, as the tool may not work perfectly on mobile.</li>
-    <li>I hope this helps you get a general idea of cutoffs</li>
-  </ul>
-</div>
-
+  <div class="card">
+    <div class="chart-wrapper">
+      <canvas id="cutoffChart"></canvas>
+    </div>
+  </div>
 
   <div class="card disclaimer">
     <strong>Disclaimer</strong>
