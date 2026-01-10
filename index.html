@@ -5,70 +5,70 @@
   <title>DU Cutoff Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1>DU Cutoff Explorer</h1>
-      <p>Interactive analysis of Delhi University cutoffs to help students plan better.</p>
-    </header>
+<div class="container">
 
-    <!-- Filters Card -->
-    <div class="card">
-      <div class="filters">
+  <header>
+    <h1>DU Cutoff Explorer</h1>
+    <p>Explore Delhi University cutoffs interactively to plan smarter.</p>
+  </header>
 
-        <div class="filter">
-          <label>Program</label>
-          <select id="programSelect"></select>
-        </div>
+  <div class="card">
+    <div class="filters">
 
-        <div class="filter">
-          <label>Category</label>
-          <select id="categorySelect">
-            <option value="UR">UR</option>
-            <option value="OBC">OBC</option>
-            <option value="SC">SC</option>
-            <option value="ST">ST</option>
-            <option value="EWS">EWS</option>
-            <option value="PwBD">PwBD</option>
-          </select>
-        </div>
-
+      <div class="filter">
+        <label>Search Program</label>
+        <input type="text" id="programSearch" placeholder="Type program name..." />
+        <select id="programSelect"></select>
       </div>
 
-      <div class="college-section">
-        <div class="college-header">
-          <h3>Select Colleges</h3>
-          <span id="collegeCount">0 / 5 selected</span>
-        </div>
-        <div id="collegeList" class="college-list"></div>
-        <div id="collegeWarning" class="warning hidden">
-          You can select up to 5 colleges for clear comparison.
-        </div>
+      <div class="filter">
+        <label>Category</label>
+        <select id="categorySelect">
+          <option value="UR">UR</option>
+          <option value="OBC">OBC</option>
+          <option value="SC">SC</option>
+          <option value="ST">ST</option>
+          <option value="EWS">EWS</option>
+          <option value="PwBD">PwBD</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="college-section">
+      <div class="college-header">
+        <h3>Select Colleges</h3>
+        <span id="collegeCount">0 / 5 selected</span>
+      </div>
+
+      <input type="text" id="collegeSearch" placeholder="Search college..." />
+      <div id="collegeList" class="college-list"></div>
+
+      <div id="collegeWarning" class="warning hidden">
+        You can select up to 5 colleges only.
       </div>
     </div>
-
-    <!-- Chart Card -->
-    <div class="card">
-      <canvas id="cutoffChart"></canvas>
-    </div>
-
-    <!-- Disclaimer -->
-    <div class="card disclaimer">
-      <strong>Disclaimer</strong>
-      <p>Disclaimer text will be added here.</p>
-    </div>
-
   </div>
 
-  <script src="script.js"></script>
+  <div class="card">
+    <div class="chart-wrapper">
+      <canvas id="cutoffChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card disclaimer">
+    <strong>Disclaimer</strong>
+    <p>Disclaimer text will be added here.</p>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
