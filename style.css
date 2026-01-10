@@ -44,6 +44,10 @@ header p {
   gap: 20px;
 }
 
+.filter {
+  position: relative;
+}
+
 .filter label {
   font-size: 14px;
   font-weight: 600;
@@ -95,8 +99,34 @@ select, input[type="text"] {
   display: none;
 }
 
+/* ---------- DROPDOWN ---------- */
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.dropdown-item {
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+/* ---------- CHART ---------- */
+
 .chart-wrapper {
-  overflow-x: auto;
+  height: 420px;
 }
 
 .disclaimer {
@@ -104,7 +134,8 @@ select, input[type="text"] {
   border-left: 4px solid #2563eb;
 }
 
-/* MOBILE FIX */
+/* ---------- MOBILE FIXES ---------- */
+
 @media (max-width: 768px) {
   header h1 {
     font-size: 24px;
@@ -120,5 +151,9 @@ select, input[type="text"] {
 
   .card {
     padding: 16px;
+  }
+
+  .chart-wrapper {
+    height: 520px;
   }
 }
