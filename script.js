@@ -21,7 +21,7 @@ const collegeList = document.getElementById("collegeList");
 const collegeCount = document.getElementById("collegeCount");
 const collegeWarning = document.getElementById("collegeWarning");
 
-fetch("data.json")
+fetch("/api/data")
   .then(res => res.json())
   .then(data => rawData = data);
 
@@ -175,3 +175,4 @@ function updateChart() {
     }
   });
 }
+
