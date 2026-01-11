@@ -23,7 +23,7 @@ const collegeWarning = document.getElementById("collegeWarning");
 
 /* ---------- LOAD DATA (API SAFE) ---------- */
 
-fetch("/api/data")
+fetch("./api/data")
   .then(res => {
     if (!res.ok) throw new Error("API failed");
     return res.json();
@@ -188,3 +188,4 @@ function updateChart() {
     }
   });
 }
+
