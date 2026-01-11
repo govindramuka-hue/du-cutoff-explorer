@@ -21,20 +21,16 @@ const collegeList = document.getElementById("collegeList");
 const collegeCount = document.getElementById("collegeCount");
 const collegeWarning = document.getElementById("collegeWarning");
 
-/* ---------- LOAD DATA (API SAFE) ---------- */
-
-fetch("./api/data")
-  .then(res => {
-    if (!res.ok) throw new Error("API failed");
-    return res.json();
-  })
-  .then(data => {
-    rawData = data;
-    console.log("Data loaded:", rawData.length);
-  })
-  .catch(err => {
-    console.error("Failed to load data", err);
-  });
+/* ---------- DATA LOAD (FIXED) ---------- */
+async function loadData() {
+  try {
+    const res = await fetch("/data"); // ✅ correct endpoint
+    rawData = await res.json();
+  } catch (e) {
+    console.error("Failed to load data", e);
+  }
+}
+loadData();
 
 /* ---------- PROGRAM SEARCH ---------- */
 
@@ -76,7 +72,7 @@ function renderColleges() {
   collegeCount.textContent = `0 / ${MAX_COLLEGES} selected`;
   collegeWarning.classList.add("hidden");
 
-  if (!selectedProgram || !rawData.length) return;
+  if (!selectedProgram) return;
 
   const colleges = rawData
     .filter(d => d["PROGRAM NAME"] === selectedProgram)
@@ -119,7 +115,7 @@ categorySelect.addEventListener("change", updateChart);
 /* ---------- CHART ---------- */
 
 function updateChart() {
-  if (!rawData.length || !selectedProgram) return;
+  if (!selectedProgram) return;
 
   const category = categorySelect.value;
   const selectedColleges = [...collegeList.querySelectorAll("input:checked")].map(i => i.value);
@@ -153,39 +149,9 @@ function updateChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      layout: {
-        padding: { left: 8, right: 8, bottom: 10 }
-      },
       scales: {
-        x: {
-          offset: true,
-          grid: { display: false },
-          ticks: {
-            autoSkip: false,
-            maxRotation: 0,
-            padding: 6,
-            callback: function (value) {
-              const label = filtered[value]["COLLEGE NAME"];
-              return label.length > 12 ? label.slice(0, 12) + "…" : label;
-            }
-          }
-        },
-        y: {
-          beginAtZero: true
-        }
-      },
-      plugins: {
-        tooltip: {
-          callbacks: {
-            title: ctx => filtered[ctx[0].dataIndex]["COLLEGE NAME"],
-            label: ctx => `Cutoff: ${ctx.raw}`
-          }
-        },
-        legend: {
-          display: true
-        }
+        y: { beginAtZero: true }
       }
     }
   });
 }
-
