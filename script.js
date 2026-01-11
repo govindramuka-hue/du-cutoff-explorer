@@ -21,13 +21,26 @@ const collegeList = document.getElementById("collegeList");
 const collegeCount = document.getElementById("collegeCount");
 const collegeWarning = document.getElementById("collegeWarning");
 
+/* ---------- LOAD DATA (API SAFE) ---------- */
+
 fetch("/api/data")
-  .then(res => res.json())
-  .then(data => rawData = data);
+  .then(res => {
+    if (!res.ok) throw new Error("API failed");
+    return res.json();
+  })
+  .then(data => {
+    rawData = data;
+    console.log("Data loaded:", rawData.length);
+  })
+  .catch(err => {
+    console.error("Failed to load data", err);
+  });
 
 /* ---------- PROGRAM SEARCH ---------- */
 
 programSearch.addEventListener("input", () => {
+  if (!rawData.length) return;
+
   const q = programSearch.value.toLowerCase();
   programDropdown.innerHTML = "";
 
@@ -63,7 +76,7 @@ function renderColleges() {
   collegeCount.textContent = `0 / ${MAX_COLLEGES} selected`;
   collegeWarning.classList.add("hidden");
 
-  if (!selectedProgram) return;
+  if (!selectedProgram || !rawData.length) return;
 
   const colleges = rawData
     .filter(d => d["PROGRAM NAME"] === selectedProgram)
@@ -103,10 +116,10 @@ function handleCollegeSelect() {
 
 categorySelect.addEventListener("change", updateChart);
 
-/* ---------- CHART (FINAL MOBILE FIX) ---------- */
+/* ---------- CHART ---------- */
 
 function updateChart() {
-  if (!selectedProgram) return;
+  if (!rawData.length || !selectedProgram) return;
 
   const category = categorySelect.value;
   const selectedColleges = [...collegeList.querySelectorAll("input:checked")].map(i => i.value);
@@ -175,4 +188,3 @@ function updateChart() {
     }
   });
 }
-
