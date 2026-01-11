@@ -25,7 +25,7 @@ fetch("data.json")
   .then(res => res.json())
   .then(data => rawData = data);
 
-/* ---------- PROGRAM SEARCH (IOS SAFE AUTOCOMPLETE) ---------- */
+/* ---------- PROGRAM SEARCH ---------- */
 
 programSearch.addEventListener("input", () => {
   const q = programSearch.value.toLowerCase();
@@ -103,7 +103,7 @@ function handleCollegeSelect() {
 
 categorySelect.addEventListener("change", updateChart);
 
-/* ---------- CHART (MOBILE + IOS FIXED) ---------- */
+/* ---------- CHART (FINAL MOBILE FIX) ---------- */
 
 function updateChart() {
   if (!selectedProgram) return;
@@ -133,21 +133,27 @@ function updateChart() {
         data: filtered.map(d => d[category]),
         backgroundColor: CATEGORY_COLORS[category],
         borderRadius: 6,
-        barThickness: 32
+        barThickness: 36,
+        maxBarThickness: 40
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      layout: { padding: 10 },
+      layout: {
+        padding: { left: 8, right: 8, bottom: 10 }
+      },
       scales: {
         x: {
+          offset: true,
+          grid: { display: false },
           ticks: {
             autoSkip: false,
             maxRotation: 0,
-            callback: (value) => {
+            padding: 6,
+            callback: function (value) {
               const label = filtered[value]["COLLEGE NAME"];
-              return label.length > 14 ? label.slice(0, 14) + "…" : label;
+              return label.length > 12 ? label.slice(0, 12) + "…" : label;
             }
           }
         },
@@ -158,8 +164,12 @@ function updateChart() {
       plugins: {
         tooltip: {
           callbacks: {
+            title: ctx => filtered[ctx[0].dataIndex]["COLLEGE NAME"],
             label: ctx => `Cutoff: ${ctx.raw}`
           }
+        },
+        legend: {
+          display: true
         }
       }
     }
