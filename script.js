@@ -21,16 +21,12 @@ const collegeList = document.getElementById("collegeList");
 const collegeCount = document.getElementById("collegeCount");
 const collegeWarning = document.getElementById("collegeWarning");
 
-/* ---------- DATA LOAD (FIXED) ---------- */
-async function loadData() {
-  try {
-    const res = await fetch("/data"); // ✅ correct endpoint
-    rawData = await res.json();
-  } catch (e) {
-    console.error("Failed to load data", e);
-  }
+/* ---------- DATA LOAD (API) ---------- */
+async function init() {
+  const res = await fetch("/data");
+  rawData = await res.json();
 }
-loadData();
+init();
 
 /* ---------- PROGRAM SEARCH ---------- */
 
@@ -112,7 +108,7 @@ function handleCollegeSelect() {
 
 categorySelect.addEventListener("change", updateChart);
 
-/* ---------- CHART ---------- */
+/* ---------- CHART (ORIGINAL ALIGNMENT RESTORED) ---------- */
 
 function updateChart() {
   if (!selectedProgram) return;
@@ -149,8 +145,38 @@ function updateChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: { left: 8, right: 8, bottom: 10 }
+      },
       scales: {
-        y: { beginAtZero: true }
+        x: {
+          offset: true,
+          grid: { display: false },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
+            minRotation: 0,
+            padding: 6,
+            callback: function (value) {
+              const label = filtered[value]["COLLEGE NAME"];
+              return label.length > 12 ? label.slice(0, 12) + "…" : label;
+            }
+          }
+        },
+        y: {
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            title: ctx => filtered[ctx[0].dataIndex]["COLLEGE NAME"],
+            label: ctx => `Cutoff: ${ctx.raw}`
+          }
+        },
+        legend: {
+          display: true
+        }
       }
     }
   });
